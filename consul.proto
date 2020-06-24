@@ -1,0 +1,22 @@
+// 定义项目 API 的 proto 文件 可以同时描述 gRPC 和 HTTP API
+// protobuf 文件参考:
+//  - https://developers.google.com/protocol-buffers/
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+package consul;
+option go_package = "consul";
+option (gogoproto.goproto_getters_all) = false;
+
+message ServiceConsul {
+    string ip = 1 [(gogoproto.moretags) = 'form:"ip" validate:"required"'];
+    int64 port = 2 [(gogoproto.moretags) = 'form:"port" validate:"required"'];
+    repeated string tags = 3;
+    string check_name = 4 [(gogoproto.moretags) = 'form:"check_name" validate:"required"'];
+    string server_name = 5 [(gogoproto.moretags) = 'form:"server_name" validate:"required"'];
+    string server_type = 6 [(gogoproto.moretags) = 'form:"server_type" validate:"required"'];
+    int64 interval = 7;
+    int64 deregister = 8;
+}
+
