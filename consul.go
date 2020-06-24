@@ -11,8 +11,10 @@ import (
 
 //go:generate kratos tool protoc --grpc consul.proto
 
-func (p *ServiceConsul) ServiceRegister() {
-	consulConfig := api.DefaultConfig()
+func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) {
+	if consulConfig == nil {
+		consulConfig = api.DefaultConfig()
+	}
 	//register consul
 
 	client, err := api.NewClient(consulConfig)
