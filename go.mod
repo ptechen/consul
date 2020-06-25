@@ -1,4 +1,4 @@
-module consul
+module github.com/ptechen/consul
 
 go 1.14
 
