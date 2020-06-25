@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -86,4 +87,19 @@ func CreateServiceConsul(ip string, port int, serverName, checkName, serverType 
 	res.ServerType = serverType
 	res.Tags = tags
 	return res, err
+}
+
+func LocalIP() string {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return ""
+	}
+	for _, address := range addrs {
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+	return ""
 }
