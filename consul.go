@@ -36,7 +36,7 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 	if strings.ToLower(p.ServerType) == "grpc" {
 		server = &api.AgentServiceCheck{ // 健康检查
 			Interval:                       interval.String(),                             // 健康检查间隔
-			GRPC:                           fmt.Sprintf("%v:%v/%v", p.Ip, p.Port, p.ServerName), // grpc 支持，执行健康检查的地址，service 会传到 Health.Check 函数中
+			GRPC:                           fmt.Sprintf("%v:%v/%v", p.Ip, p.Port, p.CheckName), // grpc 支持，执行健康检查的地址，service 会传到 Health.Check 函数中
 			DeregisterCriticalServiceAfter: deregister.String(),                           // 注销时间，相当于过期时间
 		}
 	} else {
