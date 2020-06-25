@@ -1,6 +1,7 @@
 package consul
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hashicorp/consul/api"
 	"os"
@@ -11,7 +12,7 @@ import (
 
 //go:generate kratos tool protoc --grpc consul.proto
 
-func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) {
+func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 	if consulConfig == nil {
 		consulConfig = api.DefaultConfig()
 	}
@@ -19,8 +20,7 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) {
 
 	client, err := api.NewClient(consulConfig)
 	if err != nil {
-		fmt.Printf("NewClient error\n%v", err)
-		return
+		return errors.New(fmt.Sprintf("NewClient error\n%v", err))
 	}
 	agent := client.Agent()
 	var interval time.Duration
@@ -55,9 +55,9 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) {
 		Check:   server,
 	}
 	if err := agent.ServiceRegister(reg); err != nil {
-		fmt.Printf("Service Register error\n%v", err)
-		return
+		return errors.New(fmt.Sprintf("Service Register error\n%v", err))
 	}
+	return err
 }
 
 func DockerCreateServiceConsul(ipEnv, portEnv, serverName, checkName, serverType string, tags... string) (res *ServiceConsul, err error) {
