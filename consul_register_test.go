@@ -6,7 +6,7 @@ import (
 )
 
 func TestDockerCreateServiceConsul(t *testing.T) {
-	r ,err := CreateServiceConsul("127.0.0.2", 9000,"test","ping", "http")
+	r ,err := CreateServiceConsul("127.0.0.1", 9011,"test","ping", "http")
 	if err != nil {
 		t.Error(err)
 	}
