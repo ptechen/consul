@@ -24,7 +24,6 @@ var (
 )
 
 func Init() {
-	fmt.Printf("calling consul init\n")
 	resolver.Register(NewBuilder())
 }
 
@@ -45,9 +44,6 @@ func NewBuilder() resolver.Builder {
 }
 
 func (cb *consulBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
-
-	fmt.Printf("calling consul build\n")
-	fmt.Printf("target: %v\n", target)
 	host, port, name, err := parseTarget(fmt.Sprintf("%s/%s", target.Authority, target.Endpoint))
 	if err != nil {
 		return nil, err
@@ -68,7 +64,6 @@ func (cb *consulBuilder) Build(target resolver.Target, cc resolver.ClientConn, o
 }
 
 func (cr *consulResolver) watcher() {
-	fmt.Printf("calling consul watcher\n")
 	config := api.DefaultConfig()
 	config.Address = cr.address
 	client, err := api.NewClient(config)
@@ -92,11 +87,8 @@ func (cr *consulResolver) watcher() {
 			addr := fmt.Sprintf("%v:%v", service.Service.Address, service.Service.Port)
 			state.Addresses = append(state.Addresses, resolver.Address{Addr: addr})
 		}
-		//fmt.Printf("adding service addrs\n")
 		fmt.Printf("newAddrs: %v\n", state.Addresses)
 		cr.cc.UpdateState(state)
-		//cr.cc.UpdateState()
-		//cr.cc.NewServiceConfig(cr.name)
 	}
 
 }
