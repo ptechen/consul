@@ -105,7 +105,6 @@ func (cr *consulResolver) Close() {
 
 func parseTarget(target string) (host, port, name string, err error) {
 
-	fmt.Printf("target uri: %v\n", target)
 	if target == "" {
 		return "", "", "", errMissingAddr
 	}
