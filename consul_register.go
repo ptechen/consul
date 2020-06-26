@@ -19,11 +19,6 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 	if consulConfig == nil {
 		consulConfig = api.DefaultConfig()
 	}
-	if p.ServerType == "grpc" {
-		consulConfig.Address = fmt.Sprintf("%s:%d", p.Ip, p.Port)
-	} else {
-		consulConfig.Address = fmt.Sprintf("%s://%s:%d",p.ServerType, p.Ip, p.Port)
-	}
 
 	//register consul
 
