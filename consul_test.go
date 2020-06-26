@@ -20,3 +20,8 @@ func TestLocalIP(t *testing.T) {
 	ip := LocalIP()
 	fmt.Println(ip)
 }
+
+func TestExtranetIP(t *testing.T) {
+	ip := ExtranetIP()
+	fmt.Println(ip)
+}

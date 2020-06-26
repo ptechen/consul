@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"io/ioutil"
 	"net"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -92,7 +94,7 @@ func CreateServiceConsul(ip string, port int, serverName, checkName, serverType 
 func LocalIP() string {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		return ""
+		panic(err)
 	}
 	for _, address := range addrs {
 		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
@@ -101,5 +103,18 @@ func LocalIP() string {
 			}
 		}
 	}
-	return ""
+	panic("local ip is empty")
+}
+
+func ExtranetIP() string {
+	resp, err := http.Get("http://myexternalip.com/raw")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	return string(body)
 }
