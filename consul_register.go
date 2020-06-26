@@ -33,8 +33,13 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 	} else {
 		interval = time.Duration(p.Interval) * time.Second
 	}
+	var deregister time.Duration
+	if p.Deregister == 0 {
+		deregister = time.Duration(365 * 24 * 20) * time.Hour
+	} else {
+		deregister = time.Duration(p.Deregister) * time.Minute
+	}
 
-	deregister := time.Duration(p.Deregister) * time.Minute
 
 	server := new(api.AgentServiceCheck)
 	if strings.ToLower(p.ServerType) == "grpc" {
