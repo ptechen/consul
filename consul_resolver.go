@@ -44,7 +44,7 @@ func NewBuilder() resolver.Builder {
 	return &consulBuilder{}
 }
 
-func (cb *consulBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
+func (cb *consulBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 
 	fmt.Printf("calling consul build\n")
 	fmt.Printf("target: %v\n", target)
@@ -101,7 +101,7 @@ func (cb *consulBuilder) Scheme() string {
 	return "consul"
 }
 
-func (cr *consulResolver) ResolveNow(opt resolver.ResolveNowOption) {
+func (cr *consulResolver) ResolveNow(opt resolver.ResolveNowOptions) {
 }
 
 func (cr *consulResolver) Close() {
