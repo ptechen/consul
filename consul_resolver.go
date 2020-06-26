@@ -84,15 +84,19 @@ func (cr *consulResolver) watcher() {
 		}
 
 		cr.lastIndex = metainfo.LastIndex
-		var newAddrs []resolver.Address
+
+		state := resolver.State{
+			Addresses: []resolver.Address{},
+		}
 		for _, service := range services {
 			addr := fmt.Sprintf("%v:%v", service.Service.Address, service.Service.Port)
-			newAddrs = append(newAddrs, resolver.Address{Addr: addr})
+			state.Addresses = append(state.Addresses, resolver.Address{Addr: addr})
 		}
-		fmt.Printf("adding service addrs\n")
-		fmt.Printf("newAddrs: %v\n", newAddrs)
-		cr.cc.NewAddress(newAddrs)
-		cr.cc.NewServiceConfig(cr.name)
+		//fmt.Printf("adding service addrs\n")
+		fmt.Printf("newAddrs: %v\n", state.Addresses)
+		cr.cc.UpdateState(state)
+		//cr.cc.UpdateState()
+		//cr.cc.NewServiceConfig(cr.name)
 	}
 
 }
