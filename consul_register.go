@@ -59,6 +59,7 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 }
 
 func CreateServiceConsul(ip string, port int, serverName, checkName, serverType string, tags ...string) (res *ServiceConsul, err error) {
+	tags = append(tags, serverName)
 	res = &ServiceConsul{}
 	res.Port = int64(port)
 	res.Ip = ip
