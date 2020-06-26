@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -27,40 +25,31 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 		return errors.New(fmt.Sprintf("NewClient error\n%v", err))
 	}
 	agent := client.Agent()
-	var interval time.Duration
-	if p.Interval == 0 {
-		interval = time.Duration(10) * time.Second
-	} else {
-		interval = time.Duration(p.Interval) * time.Second
-	}
-	var deregister time.Duration
-	if p.Deregister == 0 {
-		deregister = time.Duration(365 * 24 * 20) * time.Hour
-	} else {
-		deregister = time.Duration(p.Deregister) * time.Minute
-	}
 
+	interval := time.Duration(10) * time.Second
 
-	server := new(api.AgentServiceCheck)
+	deregister := time.Duration(p.Deregister) * time.Minute
+
+	server := &api.AgentServiceCheck{}
 	if strings.ToLower(p.ServerType) == "grpc" {
 		server = &api.AgentServiceCheck{ // 健康检查
-			Interval:                       interval.String(),                             // 健康检查间隔
+			Interval:                       interval.String(),                                  // 健康检查间隔
 			GRPC:                           fmt.Sprintf("%v:%v/%v", p.Ip, p.Port, p.CheckName), // grpc 支持，执行健康检查的地址，service 会传到 Health.Check 函数中
-			DeregisterCriticalServiceAfter: deregister.String(),                           // 注销时间，相当于过期时间
+			DeregisterCriticalServiceAfter: deregister.String(),                                // 注销时间，相当于过期时间
 		}
 	} else {
 		server = &api.AgentServiceCheck{ // 健康检查
-			Interval:                       interval.String(),                             // 健康检查间隔
+			Interval:                       interval.String(),                                                     // 健康检查间隔
 			HTTP:                           fmt.Sprintf("%s://%v:%v/%v", p.ServerType, p.Ip, p.Port, p.CheckName), // http 支持，执行健康检查的地址，service 会传到 Health.Check 函数中
-			DeregisterCriticalServiceAfter: deregister.String(),                           // 注销时间，相当于过期时间
+			DeregisterCriticalServiceAfter: deregister.String(),                                                   // 注销时间，相当于过期时间
 		}
 	}
 	reg := &api.AgentServiceRegistration{
 		ID:      fmt.Sprintf("%v-%v-%v", p.ServerName, p.Ip, p.Port), // 服务节点的名称
 		Name:    p.ServerName,                                        // 服务名称
-		Tags:    p.Tags,                                        // tag，可以为空
-		Port:    int(p.Port),                                   // 服务端口
-		Address: p.Ip,                                          // 服务 IP
+		Tags:    p.Tags,                                              // tag，可以为空
+		Port:    int(p.Port),                                         // 服务端口
+		Address: p.Ip,                                                // 服务 IP
 		Check:   server,
 	}
 	if err := agent.ServiceRegister(reg); err != nil {
@@ -69,24 +58,7 @@ func (p *ServiceConsul) ServiceRegister(consulConfig *api.Config) (err error) {
 	return err
 }
 
-func DockerCreateServiceConsul(ipEnv, portEnv, serverName, checkName, serverType string, tags... string) (res *ServiceConsul, err error) {
-	res = &ServiceConsul{}
-	ip := os.Getenv(ipEnv)
-	portStr := os.Getenv(portEnv)
-	port, err := strconv.Atoi(portStr)
-	if err != nil {
-		return res, err
-	}
-	res.Port = int64(port)
-	res.Ip = ip
-	res.ServerName = serverName
-	res.CheckName = checkName
-	res.ServerType = serverType
-	res.Tags = tags
-	return res, err
-}
-
-func CreateServiceConsul(ip string, port int, serverName, checkName, serverType string, tags... string) (res *ServiceConsul, err error) {
+func CreateServiceConsul(ip string, port int, serverName, checkName, serverType string, tags ...string) (res *ServiceConsul, err error) {
 	res = &ServiceConsul{}
 	res.Port = int64(port)
 	res.Ip = ip
